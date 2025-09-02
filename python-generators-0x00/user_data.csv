@@ -1,0 +1,13 @@
+def insert_data(connection, csv_file):
+    """Insert data from CSV file into user_data table"""
+    cursor = connection.cursor()
+    with open(csv_file, "r") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            uid = str(uuid.uuid4())  # génère un UUID unique
+            cursor.execute("""
+                INSERT INTO user_data (user_id, name, email, age)
+                VALUES (%s, %s, %s, %s)
+            """, (uid, row['name'], row['email'], row['age']))
+    connection.commit()
+    cursor.close()
