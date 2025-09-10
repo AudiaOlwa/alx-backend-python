@@ -1,15 +1,15 @@
 import sqlite3
 import functools
+from datetime import datetime  # <-- Ajouté pour le test
 
 # Décorateur pour logger les requêtes SQL
 def log_queries(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        # Récupère la requête SQL passée en argument
         query = kwargs.get('query') if 'query' in kwargs else args[0] if args else None
         if query:
-            print(f"[LOG] Exécution de la requête SQL : {query}")
-        # Appelle la fonction originale
+            # Logue la requête avec l'heure actuelle
+            print(f"[{datetime.now()}] Exécution de la requête SQL : {query}")
         return func(*args, **kwargs)
     return wrapper
 
@@ -22,4 +22,6 @@ def fetch_all_users(query):
     conn.close()
     return results
 
-
+# Exemple d'utilisation
+users = fetch_all_users(query="SELECT * FROM users")
+print(users)
