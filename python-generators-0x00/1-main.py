@@ -7,7 +7,7 @@ stream_users = __import__('0-stream_users')
 for user in islice(stream_users(), 6):
     print(user)
 
-(venv) faithokoth@Faiths-MacBook-Pro python-generators-0x00 %./1-main.py
+
 
 {'user_id': '00234e50-34eb-4ce2-94ec-26e3fa749796', 'name': 'Dan Altenwerth Jr.', 'email': 'Molly59@gmail.com', 'age': 67}
 {'user_id': '006bfede-724d-4cdd-a2a6-59700f40d0da', 'name': 'Glenda Wisozk', 'email': 'Miriam21@gmail.com', 'age': 119}

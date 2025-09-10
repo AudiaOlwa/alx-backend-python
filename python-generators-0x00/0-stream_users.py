@@ -18,8 +18,8 @@ def stream_users():
     connection = mysql.connector.connect(
         host="localhost",
         user="root",         # replace with your MySQL username
-        password="password", # replace with your MySQL password
-        database="ALX_prodev"
+        password="Audi25sqlpass", # replace with your MySQL password
+        database="alx_travel_app"
     )
 
     cursor = connection.cursor(dictionary=True)  # returns rows as dict
