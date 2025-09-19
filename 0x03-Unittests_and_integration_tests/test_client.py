@@ -11,15 +11,17 @@ from parameterized import parameterized
 from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
 
+
 class TestGithubOrgClient(unittest.TestCase):
     """
     Unit tests for GithubOrgClient class
     """
+    
     @parameterized.expand([
         ("google",),
         ("abc",)
     ])
-    
+
     @patch("client.get_json")
     def test_org(self, org_name, mock_get_json):
         """
@@ -57,7 +59,9 @@ class TestGithubOrgClient(unittest.TestCase):
 
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
-        """Test GithubOrgClient.public_repos method"""
+        """
+        Test GithubOrgClient.public_repos method
+        """
         # Payload simulé pour get_json
         fake_repos_payload = [
             {"name": "repo1", "license": {"key": "mit"}},
