@@ -10,7 +10,6 @@ Unit tests for the client module.
 Covers:
 - GithubOrgClient.org method
 """
-
 import unittest
 from parameterized import parameterized
 from unittest.mock import patch, PropertyMock
@@ -21,7 +20,6 @@ class TestGithubOrgClient(unittest.TestCase):
     """
     Unit tests for GithubOrgClient class
     """
-    
     @parameterized.expand([
         ("google",),
         ("abc",)
@@ -60,7 +58,6 @@ class TestGithubOrgClient(unittest.TestCase):
             client = GithubOrgClient("any_org")
             result = client._public_repos_url
             self.assertEqual(result, fake_payload["repos_url"])
-
 
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
