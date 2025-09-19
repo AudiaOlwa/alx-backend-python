@@ -15,7 +15,9 @@ from utils import access_nested_map, get_json, memoize
 
 
 class TestAccessNestedMap(unittest.TestCase):
-    """Unit tests for access_nested_map function"""
+    """
+    Unit tests for access_nested_map function
+    """
 
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
@@ -23,7 +25,9 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": {"b": 2}}, ("a", "b"), 2),
     ])
     def test_access_nested_map(self, nested_map, path, expected):
-        """Test that access_nested_map returns the expected result"""
+        """
+        Test that access_nested_map returns the expected result
+        """
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
     @parameterized.expand([
@@ -31,14 +35,18 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": 1}, ("a", "b")),
     ])
     def test_access_nested_map_exception(self, nested_map, path):
-        """Test that access_nested_map raises KeyError for invalid path"""
+        """
+        Test that access_nested_map raises KeyError for invalid path
+        """
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
         self.assertEqual(str(cm.exception), f"'{path[-1]}'")
 
 
 class TestGetJson(unittest.TestCase):
-    """Unit tests for get_json function"""
+    """
+    Unit tests for get_json function
+    """
 
     @parameterized.expand([
         ("http://example.com", {"payload": True}),
@@ -46,7 +54,9 @@ class TestGetJson(unittest.TestCase):
     ])
     @patch("utils.requests.get")
     def test_get_json(self, test_url, test_payload, mock_get):
-        """Test that get_json returns expected payload and calls requests.get once"""
+        """
+        Test that get_json returns expected payload and calls requests.get once
+        """
         mock_response = Mock()
         mock_response.json.return_value = test_payload
         mock_get.return_value = mock_response
@@ -58,21 +68,31 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """Unit tests for memoize decorator"""
+    """
+    Unit tests for memoize decorator
+    """
 
     def test_memoize(self):
-        """Test that memoize caches method results"""
+        """
+        Test that memoize caches method results
+        """
 
         class TestClass:
-            """Example class to test memoization"""
+            """
+            Example class to test memoization
+            """
 
             def a_method(self):
-                """Return a constant value"""
+                """
+                Return a constant value
+                """
                 return 42
 
             @memoize
             def a_property(self):
-                """Memoized property that calls a_method"""
+                """
+                Memoized property that calls a_method
+                """
                 return self.a_method()
 
         obj = TestClass()
