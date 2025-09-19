@@ -10,7 +10,7 @@ import unittest
 from parameterized import parameterized
 from unittest.mock import patch, Mock
 from client import GithubOrgClient
-
+from utils import get_json
 
 class TestGithubOrgClient(unittest.TestCase):
     """
