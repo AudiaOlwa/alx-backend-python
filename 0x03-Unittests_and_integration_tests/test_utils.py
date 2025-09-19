@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """
-Unit tests for the utils module
-Covers access_nested_map, get_json, and memoize
+Unit tests for the utils module.
+
+Covers:
+- access_nested_map
+- get_json
+- memoize
 """
+
 import unittest
 from parameterized import parameterized
 from unittest.mock import patch, Mock
@@ -18,7 +23,7 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": {"b": 2}}, ("a", "b"), 2),
     ])
     def test_access_nested_map(self, nested_map, path, expected):
-        """Test that access_nested_map returns expected result"""
+        """Test that access_nested_map returns the expected result"""
         self.assertEqual(access_nested_map(nested_map, path), expected)
 
     @parameterized.expand([
@@ -29,7 +34,6 @@ class TestAccessNestedMap(unittest.TestCase):
         """Test that access_nested_map raises KeyError for invalid path"""
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
-        # Check that the exception message is the last key in the path
         self.assertEqual(str(cm.exception), f"'{path[-1]}'")
 
 
@@ -42,7 +46,7 @@ class TestGetJson(unittest.TestCase):
     ])
     @patch("utils.requests.get")
     def test_get_json(self, test_url, test_payload, mock_get):
-        """Test get_json returns expected payload without making HTTP calls"""
+        """Test that get_json returns expected payload and calls requests.get once"""
         mock_response = Mock()
         mock_response.json.return_value = test_payload
         mock_get.return_value = mock_response
@@ -60,11 +64,15 @@ class TestMemoize(unittest.TestCase):
         """Test that memoize caches method results"""
 
         class TestClass:
+            """Example class to test memoization"""
+
             def a_method(self):
+                """Return a constant value"""
                 return 42
 
             @memoize
             def a_property(self):
+                """Memoized property that calls a_method"""
                 return self.a_method()
 
         obj = TestClass()
@@ -79,6 +87,7 @@ class TestMemoize(unittest.TestCase):
             # Ensure both results are correct
             self.assertEqual(result1, 42)
             self.assertEqual(result2, 42)
+
 
 if __name__ == "__main__":
     unittest.main()
