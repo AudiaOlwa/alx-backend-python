@@ -5,9 +5,10 @@ Unit tests for the client module.
 Covers:
 - GithubOrgClient.org method
 """
+
 import unittest
 from parameterized import parameterized
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from client import GithubOrgClient
 
 
@@ -32,7 +33,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
         # Instantiate the client and access the org property
         client = GithubOrgClient(org_name)
-        result = client.org
+        result = client.org  # org is a @memoize property
 
         # Ensure get_json was called once with the correct URL
         expected_url = f"https://api.github.com/orgs/{org_name}"
