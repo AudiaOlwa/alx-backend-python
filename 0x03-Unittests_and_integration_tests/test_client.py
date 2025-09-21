@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Unit tests for the client module.
+
 Covers:
 - GithubOrgClient.org method
 - GithubOrgClient._public_repos_url property
@@ -18,7 +19,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
     @parameterized.expand([
         ("google",),
-        ("abc",)
+        ("abc",),
     ])
     @patch("client.get_json")
     def test_org(self, org_name, mock_get_json):
@@ -42,7 +43,8 @@ class TestGithubOrgClient(unittest.TestCase):
         fake_payload = {"repos_url": "http://fakeurl.com/repos"}
         with patch(
             "client.GithubOrgClient.org",
-            new_callable=PropertyMock) as mock_org:
+            new_callable=PropertyMock,
+        ) as mock_org:
             mock_org.return_value = fake_payload
             client = GithubOrgClient("any_org")
             result = client._public_repos_url
@@ -60,8 +62,10 @@ class TestGithubOrgClient(unittest.TestCase):
         ]
         mock_get_json.return_value = fake_repos_payload
 
-        with patch("client.GithubOrgClient._public_repos_url",
-                   new_callable=PropertyMock) as mock_url:
+        with patch(
+            "client.GithubOrgClient._public_repos_url",
+            new_callable=PropertyMock,
+        ) as mock_url:
             mock_url.return_value = "http://fakeurl.com/repos"
             client = GithubOrgClient("any_org")
 
