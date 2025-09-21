@@ -102,6 +102,7 @@ repos_payload = [
 expected_repos = ["repo1", "repo2"]
 apache2_repos = ["repo1"]
 
+
 class MockResponse:
     """Helper class to mock requests.Response with .json()"""
     def __init__(self, payload):
@@ -122,11 +123,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Start patcher for requests.get with side_effect based on URL"""
         cls.get_patcher = patch("requests.get")
         cls.mock_get = cls.get_patcher.start()
 
-        # Side effect depending on URL
         def side_effect(url, *args, **kwargs):
             if url == GithubOrgClient.ORG_URL.format(org="test_org"):
                 return MockResponse(cls.org_payload)
@@ -138,19 +137,17 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """Stop patcher"""
         cls.get_patcher.stop()
 
     def test_public_repos(self):
-        """Test that public_repos returns the expected repo list"""
         client = GithubOrgClient("test_org")
         repos = client.public_repos()
         self.assertEqual(repos, self.expected_repos)
 
     def test_public_repos_with_license(self):
-        """Test that public_repos filters correctly by license"""
         client = GithubOrgClient("test_org")
         repos = client.public_repos(license="apache-2.0")
         self.assertEqual(repos, self.apache2_repos)
+        
 if __name__ == "__main__":
     unittest.main()
