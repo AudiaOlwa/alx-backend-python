@@ -100,6 +100,7 @@ class MockResponse:
     def json(self):
         return self._payload
 
+
 @parameterized_class([
     {
         "org_payload": org_payload,
@@ -108,6 +109,7 @@ class MockResponse:
         "apache2_repos": apache2_repos,
     }
 ])
+
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """Integration tests for GithubOrgClient.public_repos"""
 
