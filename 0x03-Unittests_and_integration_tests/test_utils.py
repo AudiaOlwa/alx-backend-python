@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 """
@@ -11,6 +12,7 @@ Covers:
 - get_json
 - memoize
 """
+
 import unittest
 from parameterized import parameterized
 from unittest.mock import patch, Mock
@@ -21,6 +23,7 @@ class TestAccessNestedMap(unittest.TestCase):
     """
     Unit tests for access_nested_map function
     """
+
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
         ({"a": {"b": 2}}, ("a",), {"b": 2}),
@@ -49,6 +52,7 @@ class TestGetJson(unittest.TestCase):
     """
     Unit tests for get_json function
     """
+
     @parameterized.expand([
         ("http://example.com", {"payload": True}),
         ("http://holberton.io", {"payload": False}),
