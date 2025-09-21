@@ -11,7 +11,6 @@ from parameterized import parameterized
 from parameterized import parameterized_class
 from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
-import requests
 from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -94,17 +93,8 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
 #exercice8
-org_payload = {"repos_url": "https://api.github.com/orgs/test_org/repos"}
-repos_payload = [
-    {"name": "repo1", "license": {"key": "apache-2.0"}},
-    {"name": "repo2", "license": {"key": "mit"}}
-]
-expected_repos = ["repo1", "repo2"]
-apache2_repos = ["repo1"]
-
-
 class MockResponse:
-    """Helper class to mock requests.Response with .json()"""
+    """Helper class to mock requests.Response with a .json() method."""
     def __init__(self, payload):
         self._payload = payload
 
@@ -113,7 +103,7 @@ class MockResponse:
 
 
 @parameterized_class(
-    ('org_payload', 'repos_payload', 'expected_repos', 'apache2_repos'),
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
     [
         (org_payload, repos_payload, expected_repos, apache2_repos)
     ]
@@ -123,31 +113,37 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Start patcher for requests.get with side_effect based on URL"""
         cls.get_patcher = patch("requests.get")
         cls.mock_get = cls.get_patcher.start()
 
+        # side_effect returns payload based on URL called
         def side_effect(url, *args, **kwargs):
             if url == GithubOrgClient.ORG_URL.format(org="test_org"):
                 return MockResponse(cls.org_payload)
             elif url == cls.org_payload["repos_url"]:
                 return MockResponse(cls.repos_payload)
-            return MockResponse({})
+            return MockResponse({})  # default empty
 
         cls.mock_get.side_effect = side_effect
 
     @classmethod
     def tearDownClass(cls):
+        """Stop patcher"""
         cls.get_patcher.stop()
 
     def test_public_repos(self):
+        """Test that public_repos returns the expected repos list"""
         client = GithubOrgClient("test_org")
         repos = client.public_repos()
         self.assertEqual(repos, self.expected_repos)
 
     def test_public_repos_with_license(self):
+        """Test that public_repos filters repos correctly by license"""
         client = GithubOrgClient("test_org")
         repos = client.public_repos(license="apache-2.0")
         self.assertEqual(repos, self.apache2_repos)
-        
+
+
 if __name__ == "__main__":
     unittest.main()
