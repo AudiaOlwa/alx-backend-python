@@ -121,8 +121,11 @@ class MockResponse:
 
     def __init__(self, payload):
         self._payload = payload
-
+        
     def json(self):
+        """
+        Return the payload of the mock response.
+        """
         return self._payload
 
 
