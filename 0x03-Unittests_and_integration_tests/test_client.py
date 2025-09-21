@@ -92,6 +92,8 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
 # TASK 8
+
+
 class MockResponse:
     """
     Mock response object for requests.get().json() used in integration tests.
