@@ -11,6 +11,23 @@ import requests
 from client import GithubOrgClient
 
 
+# ----------------------------------------------------------------------
+# Définition des fixtures locales pour l'intégration
+org_payload = {
+    "login": "test_org",
+    "repos_url": "https://api.github.com/orgs/test_org/repos"
+}
+
+repos_payload = [
+    {"name": "repo1", "license": {"key": "apache-2.0"}},
+    {"name": "repo2", "license": {"key": "mit"}},
+    {"name": "repo3", "license": {"key": "apache-2.0"}}
+]
+
+expected_repos = ["repo1", "repo2", "repo3"]
+apache2_repos = ["repo1", "repo3"]
+
+# ----------------------------------------------------------------------
 class TestGithubOrgClient(unittest.TestCase):
     """
     Test GithubOrgClient class.
@@ -91,13 +108,13 @@ class TestGithubOrgClient(unittest.TestCase):
         result = client.has_license(repo, license_key)
         self.assertEqual(result, expected)
 
-# TASK 8
-
-
+# ----------------------------------------------------------------------
+# TASK 8 & 9: Integration tests
 class MockResponse:
     """
     Mock response object for requests.get().json() used in integration tests.
     """
+
     def __init__(self, payload):
         self._payload = payload
 
@@ -105,15 +122,10 @@ class MockResponse:
         return self._payload
 
 
-@parameterized_class((
-    "org_payload",
-    "repos_payload",
-    "expected_repos",
-    "apache2_repos",
-), [
-    (fixtures.org_payload, fixtures.repos_payload,
-     fixtures.expected_repos, fixtures.apache2_repos),
-])
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    [(org_payload, repos_payload, expected_repos, apache2_repos)],
+)
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """
     Integration tests for GithubOrgClient.public_repos.
