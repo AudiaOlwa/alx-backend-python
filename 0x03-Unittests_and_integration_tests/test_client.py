@@ -10,6 +10,9 @@ import unittest
 from parameterized import parameterized
 from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
+from parameterized import parameterized_class
+import requests
+from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -79,7 +82,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
             mock_url.assert_called_once()
             mock_get_json.assert_called_once()
-            
+
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
         ({"license": {"key": "other_license"}}, "my_license", False),
@@ -90,6 +93,48 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
+
+        @classmethod
+    def setUpClass(cls):
+        """Set up patcher for requests.get"""
+        cls.get_patcher = patch("requests.get")
+
+        # Start the patcher
+        mock_get = cls.get_patcher.start()
+
+        # Configure side_effect to mock different URLs
+        def mock_requests_get(url):
+            if url == GithubOrgClient.ORG_URL.format(org="test_org"):
+                return MockResponse(cls.org_payload)
+            elif url == cls.org_payload["repos_url"]:
+                return MockResponse(cls.repos_payload)
+
+        mock_get.side_effect = mock_requests_get
+
+    @classmethod
+    def tearDownClass(cls):
+        """Stop patcher"""
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """Integration test: public_repos returns expected repos"""
+        client = GithubOrgClient("test_org")
+        self.assertEqual(client.public_repos(), self.expected_repos)
+
+    def test_public_repos_with_license(self):
+        """Integration test: public_repos with license filter"""
+        client = GithubOrgClient("test_org")
+        self.assertEqual(client.public_repos(license="apache-2.0"),
+                         self.apache2_repos)
+
+
+class MockResponse:
+    """Helper class to mock requests.Response with .json()"""
+    def __init__(self, payload):
+        self._payload = payload
+
+    def json(self):
+        return self._payload
 
 if __name__ == "__main__":
     unittest.main()
