@@ -7,13 +7,11 @@ Covers:
 - GithubOrgClient.public_repos method
 """
 import unittest
-from parameterized import parameterized
 from parameterized import parameterized_class
 from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
 import requests
 from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
-
 
 class TestGithubOrgClient(unittest.TestCase):
     """
@@ -94,7 +92,14 @@ class TestGithubOrgClient(unittest.TestCase):
         result = GithubOrgClient.has_license(repo, license_key)
         self.assertEqual(result, expected)
 #exercice8
-    @parameterized_class([
+class MockResponse:
+    def __init__(self, payload):
+        self._payload = payload
+
+    def json(self):
+        return self._payload
+
+@parameterized_class([
     {
         "org_payload": org_payload,
         "repos_payload": repos_payload,
@@ -103,6 +108,7 @@ class TestGithubOrgClient(unittest.TestCase):
     }
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration tests for GithubOrgClient.public_repos"""
 
     @classmethod
     def setUpClass(cls):
@@ -110,12 +116,12 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch("requests.get")
         cls.mock_get = cls.get_patcher.start()
 
-        # Side effect selon URL
-        def side_effect(url):
-            if url == GithubOrgClient.ORG_URL.format(org="test_org"):
+        def side_effect(url, *args, **kwargs):
+            if url == GithubOrgClient.ORG_URL.format(org=cls.org_payload["login"]):
                 return MockResponse(cls.org_payload)
             elif url == cls.org_payload["repos_url"]:
                 return MockResponse(cls.repos_payload)
+            return MockResponse({})
 
         cls.mock_get.side_effect = side_effect
 
@@ -123,14 +129,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def tearDownClass(cls):
         """Stop patcher"""
         cls.get_patcher.stop()
-
-class MockResponse:
-    """Helper class to mock requests.Response with .json()"""
-    def __init__(self, payload):
-        self._payload = payload
-
-    def json(self):
-        return self._payload
 
 if __name__ == "__main__":
     unittest.main()
