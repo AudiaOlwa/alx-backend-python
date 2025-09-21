@@ -40,6 +40,17 @@ INSTALLED_APPS = [
     'rest_framework',
 ]
 
+# Configuration DRF
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',   # Par défaut : utilisateur doit être authentifié
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # Auth basée sur sessions
+        # 'rest_framework.authentication.BasicAuthentication',  # tu peux l’ajouter si besoin
+    ],
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
