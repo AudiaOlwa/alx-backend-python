@@ -130,55 +130,55 @@ class MockResponse:
         return self._payload
 
 
-    @parameterized_class(
-        ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
-        [(org_payload, repos_payload, expected_repos, apache2_repos)]
-    )
-    class TestIntegrationGithubOrgClient(unittest.TestCase):
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    [(org_payload, repos_payload, expected_repos, apache2_repos)]
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """
+    Integration tests for GithubOrgClient.public_repos.
+    """
+
+    @classmethod
+    def setUpClass(cls):
         """
-        Integration tests for GithubOrgClient.public_repos.
+        Start patcher for requests.get and mock JSON responses.
         """
+        cls.get_patcher = patch("requests.get")
+        mock_get = cls.get_patcher.start()
 
-        @classmethod
-        def setUpClass(cls):
-            """
-            Start patcher for requests.get and mock JSON responses.
-            """
-            cls.get_patcher = patch("requests.get")
-            mock_get = cls.get_patcher.start()
+        def side_effect(url):
+            if url == "https://api.github.com/orgs/test_org":
+                return MockResponse(cls.org_payload)
+            if url == cls.org_payload.get("repos_url"):
+                return MockResponse(cls.repos_payload)
+            return None
 
-            def side_effect(url):
-                if url == "https://api.github.com/orgs/test_org":
-                    return MockResponse(cls.org_payload)
-                if url == cls.org_payload.get("repos_url"):
-                    return MockResponse(cls.repos_payload)
-                return None
+        mock_get.side_effect = side_effect
 
-            mock_get.side_effect = side_effect
+    @classmethod
+    def tearDownClass(cls):
+        """
+        Stop patcher for requests.get.
+        """
+        cls.get_patcher.stop()
 
-        @classmethod
-        def tearDownClass(cls):
-            """
-            Stop patcher for requests.get.
-            """
-            cls.get_patcher.stop()
+    def test_public_repos(self):
+        """
+        Test that public_repos returns all expected repos.
+        """
+        client = GithubOrgClient("test_org")
+        self.assertEqual(client.public_repos(), self.expected_repos)
 
-        def test_public_repos(self):
-            """
-            Test that public_repos returns all expected repos.
-            """
-            client = GithubOrgClient("test_org")
-            self.assertEqual(client.public_repos(), self.expected_repos)
-
-        def test_public_repos_with_license(self):
-            """
-            Test that public_repos returns repos filtered by license.
-            """
-            client = GithubOrgClient("test_org")
-            self.assertEqual(
+    def test_public_repos_with_license(self):
+        """
+        Test that public_repos returns repos filtered by license.
+        """
+        client = GithubOrgClient("test_org")
+        self.assertEqual(
             client.public_repos(license="apache-2.0"),
             self.apache2_repos
-            )
+        )
 
 
 if __name__ == "__main__":
