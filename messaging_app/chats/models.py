@@ -23,6 +23,9 @@ class User(AbstractUser):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="guest")
     created_at = models.DateTimeField(auto_now_add=True)
 
+    
+    password = models.CharField(max_length=128, null=False, blank=False)
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username", "first_name", "last_name"]
 
