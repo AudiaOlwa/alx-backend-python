@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#!/usr/bin/env python3
 import unittest
 from unittest.mock import patch
 from parameterized import parameterized
@@ -21,6 +20,6 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         mock_get_json.return_value = {"key": "value"}
         client = GithubOrgClient(org_name)
-        result = client.org()
+        result = client.org
         mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
         self.assertEqual(result, {"key": "value"})
