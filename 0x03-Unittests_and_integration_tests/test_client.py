@@ -7,6 +7,7 @@ Covers:
 - GithubOrgClient.public_repos method
 """
 import unittest
+from parameterized import parameterized
 from parameterized import parameterized_class
 from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
