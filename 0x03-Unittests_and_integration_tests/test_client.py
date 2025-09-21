@@ -28,6 +28,8 @@ expected_repos = ["repo1", "repo2", "repo3"]
 apache2_repos = ["repo1", "repo3"]
 
 # ----------------------------------------------------------------------
+
+
 class TestGithubOrgClient(unittest.TestCase):
     """
     Test GithubOrgClient class.
@@ -110,6 +112,8 @@ class TestGithubOrgClient(unittest.TestCase):
 
 # ----------------------------------------------------------------------
 # TASK 8 & 9: Integration tests
+
+
 class MockResponse:
     """
     Mock response object for requests.get().json() used in integration tests.
