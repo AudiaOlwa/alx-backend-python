@@ -18,12 +18,12 @@ class TestGithubOrgClient(unittest.TestCase):
     Unit tests for GithubOrgClient class
     """
 
-    @patch("client.get_json")
     @parameterized.expand([
         ("google",),
         ("abc",),
     ])
-    def test_org(self, mock_get_json, org_name):
+    @patch("client.get_json")
+    def test_org(self, org_name, mock_get_json):
         """
         Test that GithubOrgClient.org returns correct value and calls get_json
         """
@@ -36,7 +36,7 @@ class TestGithubOrgClient(unittest.TestCase):
         expected_url = f"https://api.github.com/orgs/{org_name}"
         mock_get_json.assert_called_once_with(expected_url)
         self.assertEqual(result, test_payload)
-#---
+#-------
     def test_public_repos_url(self):
         """
         Test GithubOrgClient._public_repos_url property
