@@ -5,7 +5,8 @@ Unittests for GithubOrgClient.
 
 import unittest
 from unittest.mock import patch, PropertyMock
-from parameterized import parameterized, parameterized_class
+from parameterized import parameterized
+from parameterized import parameterized_class
 import fixtures
 import requests
 from client import GithubOrgClient
@@ -131,7 +132,7 @@ class MockResponse:
 
 @parameterized_class(
     ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
-    [(org_payload, repos_payload, expected_repos, apache2_repos)],
+    [(org_payload, repos_payload, expected_repos, apache2_repos)]
 )
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """
