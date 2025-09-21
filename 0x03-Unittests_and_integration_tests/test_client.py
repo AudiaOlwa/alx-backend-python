@@ -114,7 +114,7 @@ class MockResponse:
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """
-    Integration tests for GithubOrgClient.public_repos (Task 8).
+    Integration tests for GithubOrgClient.public_repos.
     """
 
     @classmethod
@@ -136,14 +136,12 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        """
-        Stop patcher for requests.get.
-        """
+        """Stop patcher for requests.get."""
         cls.get_patcher.stop()
 
     def test_public_repos(self):
         """
-        Test that public_repos returns expected repos.
+        Test that public_repos returns all expected repos.
         """
         client = GithubOrgClient("test_org")
         self.assertEqual(client.public_repos(), self.expected_repos)
@@ -157,6 +155,7 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             client.public_repos(license="apache-2.0"),
             self.apache2_repos
         )
+
 
 if __name__ == "__main__":
     unittest.main()
