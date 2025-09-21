@@ -129,7 +129,7 @@ class MockResponse:
         return self._payload
 
 
-@parameterized_class(
+@parameterized(
     ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
     [(org_payload, repos_payload, expected_repos, apache2_repos)],
 )
