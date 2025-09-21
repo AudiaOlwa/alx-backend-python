@@ -6,7 +6,7 @@ Unittests for GithubOrgClient.
 import unittest
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized_class, parameterized
-from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
+import fixtures
 import requests
 from client import GithubOrgClient
 
@@ -96,7 +96,6 @@ class MockResponse:
     """
     Mock response object for requests.get().json() used in integration tests.
     """
-
     def __init__(self, payload):
         self._payload = payload
 
@@ -110,7 +109,8 @@ class MockResponse:
     "expected_repos",
     "apache2_repos",
 ), [
-    (org_payload, repos_payload, expected_repos, apache2_repos),
+    (fixtures.org_payload, fixtures.repos_payload,
+     fixtures.expected_repos, fixtures.apache2_repos),
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
     """
