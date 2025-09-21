@@ -92,6 +92,18 @@ class TestGithubOrgClient(unittest.TestCase):
         self.assertEqual(result, expected)
 
     # TASK 8
+class MockResponse:
+    """
+    Mock response object for requests.get().json().
+    """
+
+    def __init__(self, json_data):
+        self._json_data = json_data
+
+    def json(self):
+        return self._json_data
+
+
 @parameterized_class((
     "org_payload",
     "repos_payload",
@@ -111,10 +123,8 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         Start patcher for requests.get and mock JSON responses.
         """
         cls.get_patcher = patch("requests.get")
-
         mock_get = cls.get_patcher.start()
 
-        # Configure side_effect pour renvoyer différents payloads
         def side_effect(url):
             if url == "https://api.github.com/orgs/test_org":
                 return MockResponse(cls.org_payload)
@@ -147,16 +157,4 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             client.public_repos(license="apache-2.0"),
             self.apache2_repos
         )
-
-
-class MockResponse:
-    """
-    Mock response object for requests.get().json().
-    """
-
-    def __init__(self, json_data):
-        self._json_data = json_data
-
-    def json(self):
-        return self._json_data
 
