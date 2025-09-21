@@ -55,7 +55,10 @@ class TestGetJson(unittest.TestCase):
     ])
     @patch("utils.requests.get")
     def test_get_json(self, test_url, test_payload, mock_get):
-        """Test that get_json returns expected payload and calls requests.get once"""
+        """Test that get_json returns expected payload and
+           calls requests.get once
+        """
+
         mock_response = Mock()
         mock_response.json.return_value = test_payload
         mock_get.return_value = mock_response
@@ -67,21 +70,31 @@ class TestGetJson(unittest.TestCase):
 
 
 class TestMemoize(unittest.TestCase):
-    """Unit tests for memoize decorator"""
+    """
+    Unit tests for memoize decorator
+    """
 
     def test_memoize(self):
-        """Test that memoize caches method results"""
+        """
+        Test that memoize caches method results
+        """
 
         class TestClass:
-            """Example class to test memoization"""
+            """
+            Example class to test memoization
+            """
 
             def a_method(self):
-                """Return a constant value"""
+                """
+                Return a constant value
+                """
                 return 42
 
             @memoize
             def a_property(self):
-                """Memoized property that calls a_method"""
+                """
+                Memoized property that calls a_method
+                """
                 return self.a_method()
 
         obj = TestClass()
