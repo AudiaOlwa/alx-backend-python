@@ -11,7 +11,6 @@ from parameterized import parameterized
 from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient
 
-
 class TestGithubOrgClient(unittest.TestCase):
     """Unit tests for GithubOrgClient class"""
 
