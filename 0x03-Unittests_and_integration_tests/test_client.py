@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import patch
-import parameterized
+from parameterized import parameterized
 from client import GithubOrgClient
+
 
 class TestGithubOrgClient(unittest.TestCase):
     @parameterized.expand([
