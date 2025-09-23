@@ -54,18 +54,11 @@ REST_FRAMEWORK = {
           # Auth basée sur sessions
         # 'rest_framework.authentication.BasicAuthentication',  # tu peux l’ajouter si besoin
     ],
-}
-
-# Auth settings
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-        # tu peux ajouter SessionAuthentication si tu veux les deux :
-        "rest_framework.authentication.SessionAuthentication",
+    "DEFAULT_FILTER_BACKENDS": (
+        "django_filters.rest_framework.DjangoFilterBackend",
     ),
-    "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
-    ),
+    "DEFAULT_PAGINATION_CLASS": "chats.pagination.MessagePagination",
+    "PAGE_SIZE": 20,
 }
 
 

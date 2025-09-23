@@ -65,16 +65,16 @@ class ConversationViewSet(viewsets.ModelViewSet):
     serializer_class = ConversationSerializer
     permission_classes = [IsParticipantOfConversation]
 
-
+# add pagination & filters
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
+    queryset = Message.objects.all().order_by("-timestamp")  # plus récents d’abord
     serializer_class = MessageSerializer
     permission_classes = [IsParticipantOfConversation]
+    pagination_class = MessagePagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MessageFilter
 
     def perform_create(self, serializer):
-        """
-        Vérifie que seul un participant peut envoyer un message
-        """
         conversation = serializer.validated_data.get("conversation")
         if self.request.user not in conversation.participants.all():
             return Response(
