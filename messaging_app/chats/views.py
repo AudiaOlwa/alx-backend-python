@@ -63,10 +63,22 @@ class MessageViewSet(viewsets.ModelViewSet):
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
+    permission_classes = [IsParticipantOfConversation]
 
 
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
+    permission_classes = [IsParticipantOfConversation]
+
+    def perform_create(self, serializer):
+        """
+        Vérifie que seul un participant peut envoyer un message
+        """
+        conversation = serializer.validated_data.get("conversation")
+        if self.request.user not in conversation.participants.all():
+            return Response(
+                {"detail": "Vous n’êtes pas autorisé à envoyer un message dans cette conversation."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        serializer.save(sender=self.request.user)

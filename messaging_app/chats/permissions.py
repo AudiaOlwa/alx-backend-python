@@ -12,25 +12,32 @@ class IsOwnerOrReadOnly(BasePermission):
 #--
 class IsParticipantOfConversation(permissions.BasePermission):
     """
-    Permission qui :
-    - Autorise uniquement les utilisateurs authentifiés
-    - Vérifie que l'utilisateur fait partie de la conversation
+    Autorise uniquement :
+    - Utilisateurs authentifiés
+    - Participants de la conversation à envoyer, voir, modifier et supprimer des messages
     """
 
     def has_permission(self, request, view):
-        # Autoriser seulement les utilisateurs connectés
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
         """
-        Vérifie si l’utilisateur est participant de la conversation.
-        On suppose que Conversation a un champ participants = ManyToMany(User).
-        Et que Message est lié à Conversation par un FK.
+        Vérifie si l’utilisateur est participant avant les actions sensibles
         """
-        if hasattr(obj, "participants"):  # Cas Conversation
-            return request.user in obj.participants.all()
+        # Identifier la conversation (cas Message ou Conversation)
+        if hasattr(obj, "participants"):  # Conversation
+            participants = obj.participants.all()
+        elif hasattr(obj, "conversation"):  # Message
+            participants = obj.conversation.participants.all()
+        else:
+            return False
 
-        if hasattr(obj, "conversation"):  # Cas Message
-            return request.user in obj.conversation.participants.all()
+        # Autoriser seulement si l’utilisateur est participant
+        if request.user not in participants:
+            return False
+
+        # Actions protégées (lecture et écriture)
+        if request.method in ["GET", "POST", "PUT", "PATCH", "DELETE"]:
+            return True
 
         return False
