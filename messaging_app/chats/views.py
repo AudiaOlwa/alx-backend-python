@@ -2,10 +2,10 @@ from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
-
 from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
-
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsOwnerOrReadOnly
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all().prefetch_related("participants", "messages")
@@ -43,3 +43,18 @@ class MessageViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         message = serializer.save(sender=request.user)
         return Response(MessageSerializer(message).data, status=status.HTTP_201_CREATED)
+#---
+
+
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def get_queryset(self):
+        # L’utilisateur ne peut voir que ses propres messages
+        return Message.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Associer automatiquement l’utilisateur connecté au message
+        serializer.save(user=self.request.user)

@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'chats'
+    'chats',
 ]
 
 # Configuration DRF
@@ -52,6 +52,18 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',  # Auth basée sur sessions
         # 'rest_framework.authentication.BasicAuthentication',  # tu peux l’ajouter si besoin
     ],
+}
+
+# Auth settings
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        # tu peux ajouter SessionAuthentication si tu veux les deux :
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
 }
 
 MIDDLEWARE = [
