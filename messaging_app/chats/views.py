@@ -58,3 +58,15 @@ class MessageViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         # Associer automatiquement l’utilisateur connecté au message
         serializer.save(user=self.request.user)
+        
+#--Appliquer la permission dans tes views
+class ConversationViewSet(viewsets.ModelViewSet):
+    queryset = Conversation.objects.all()
+    serializer_class = ConversationSerializer
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]
+
+
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+    permission_classes = [IsAuthenticated, IsParticipantOfConversation]

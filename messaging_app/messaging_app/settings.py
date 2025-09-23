@@ -49,7 +49,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',   # Par défaut : utilisateur doit être authentifié
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',  # Auth basée sur sessions
+        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+          # Auth basée sur sessions
         # 'rest_framework.authentication.BasicAuthentication',  # tu peux l’ajouter si besoin
     ],
 }
@@ -65,6 +67,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ),
 }
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
