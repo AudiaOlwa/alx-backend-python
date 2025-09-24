@@ -6,6 +6,14 @@ from .models import Conversation, Message
 from .serializers import ConversationSerializer, MessageSerializer
 from rest_framework.permissions import IsAuthenticated
 from .permissions import IsOwnerOrReadOnly
+from .permissions import IsParticipantOfConversation
+from .pagination import MessagePagination
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import MessageFilter
+
+
+
+
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all().prefetch_related("participants", "messages")
@@ -67,7 +75,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 # add pagination & filters
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all().order_by("-timestamp")  # plus récents d’abord
+    queryset = Message.objects.all().order_by("sent_at")  # plus récents d’abord
     serializer_class = MessageSerializer
     permission_classes = [IsParticipantOfConversation]
     pagination_class = MessagePagination

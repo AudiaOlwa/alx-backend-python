@@ -27,22 +27,21 @@ class UserSerializer(serializers.ModelSerializer):
 # Message Serializer
 # -------------------------
 class MessageSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)
-    # Exemple de champ calculé avec SerializerMethodField
-    preview = serializers.SerializerMethodField()
+    sender = serializers.SlugRelatedField(
+        slug_field="user_id",  # On utilise le user_id comme identifiant
+        queryset=User.objects.all()
+    )
+    conversation = serializers.SlugRelatedField(
+        slug_field="conversation_id",  # On utilise le conversation_id comme identifiant
+        queryset=Conversation.objects.all()
+    )
+    preview = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Message
-        fields = [
-            "message_id",
-            "sender",
-            "message_body",
-            "sent_at",
-            "preview",
-        ]
+        fields = ["message_id", "conversation", "sender", "message_body", "sent_at", "preview"]
 
     def get_preview(self, obj):
-        """Retourne les 30 premiers caractères du message comme aperçu"""
         return obj.message_body[:30]
 
 
@@ -51,6 +50,13 @@ class MessageSerializer(serializers.ModelSerializer):
 # -------------------------
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
+    participants_ids = serializers.SlugRelatedField(
+        many=True,
+        slug_field="user_id",          # 👈 ici on dit d’utiliser user_id au lieu de id
+        queryset=User.objects.all(),   # 👈 DRF sait où chercher
+        write_only=True,
+        source="participants"          # 👈 relie ça au champ ManyToMany participants
+    )
     messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
@@ -58,15 +64,22 @@ class ConversationSerializer(serializers.ModelSerializer):
         fields = [
             "conversation_id",
             "participants",
+            "participants_ids",
             "created_at",
             "messages",
         ]
 
+    def create(self, validated_data):
+        participants = validated_data.pop("participants", [])
+        conversation = Conversation.objects.create(**validated_data)
+        conversation.participants.set(participants)
+        return conversation
+
     # Exemple d’utilisation de ValidationError
-    def validate_participants(self, value):
-        """Vérifie qu’il y a au moins 2 participants dans une conversation"""
+    def validate_participants_ids(self, value):
+    #"""Vérifie qu’il y a au moins deux participants"""
         if len(value) < 2:
             raise serializers.ValidationError(
-                "Une conversation doit avoir au moins deux participants."
+            "Une conversation doit avoir au moins deux participants."
             )
         return value

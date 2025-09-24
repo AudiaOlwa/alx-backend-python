@@ -11,5 +11,5 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path('api/', include('chats.urls')),
     path('api-auth/', include('rest_framework.urls')),  # Auth DRF pour la Browsable API
-    path("chats/", include("messaging_app.chats.urls")),  # si tu as un module chats
+    
 ]

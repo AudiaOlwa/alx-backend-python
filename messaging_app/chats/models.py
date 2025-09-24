@@ -9,8 +9,9 @@ from django.contrib.auth.models import AbstractUser
 # Custom User Model
 # -------------------------
 class User(AbstractUser):
+    id = models.BigAutoField(primary_key=True)
     user_id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, unique=True, db_index=True
+        default=uuid.uuid4, editable=False, unique=True, db_index=True
     )
     email = models.EmailField(unique=True, null=False, blank=False)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
