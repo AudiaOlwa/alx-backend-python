@@ -53,48 +53,40 @@ class RestrictAccessByTimeMiddleware:
         return response
 
 #--
-class RateLimitMiddleware:
+class OffensiveLanguageMiddleware:
     """
     Middleware qui limite le nombre de messages envoyés par IP.
-    Par exemple : max 5 messages par minute.
+    Max 5 messages par minute.
     """
 
     def __init__(self, get_response):
         self.get_response = get_response
-        # Dictionnaire pour stocker les timestamps des requêtes par IP
         self.ip_message_times = {}
         self.TIME_WINDOW = 60  # secondes
-        self.MAX_MESSAGES = 5  # messages par TIME_WINDOW
+        self.MAX_MESSAGES = 5  # messages par fenêtre
 
     def __call__(self, request):
-        # On applique uniquement sur l'envoi de messages (POST sur /api/messages/)
+        # Appliquer uniquement sur POST /api/messages/
         if request.path.startswith("/api/messages/") and request.method == "POST":
             ip = self.get_client_ip(request)
             now = time.time()
-            # Liste des timestamps pour cette IP
             timestamps = self.ip_message_times.get(ip, [])
-
             # Supprimer les timestamps hors de la fenêtre
             timestamps = [t for t in timestamps if now - t < self.TIME_WINDOW]
 
             if len(timestamps) >= self.MAX_MESSAGES:
-                # Limite dépassée
                 return JsonResponse(
                     {"detail": "Message rate limit exceeded. Try again later."},
                     status=429,
                 )
 
-            # Ajouter le timestamp actuel
             timestamps.append(now)
             self.ip_message_times[ip] = timestamps
 
-        # Continuer le traitement normal
-        response = self.get_response(request)
-        return response
+        return self.get_response(request)
 
     @staticmethod
     def get_client_ip(request):
-        """Récupère l'adresse IP du client"""
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
         if x_forwarded_for:
             ip = x_forwarded_for.split(",")[0]
