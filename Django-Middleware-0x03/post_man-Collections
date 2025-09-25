@@ -1,0 +1,102 @@
+{
+	"info": {
+		"_postman_id": "d106556b-ab36-466e-8de9-1cda9613fc5a",
+		"name": "ALX Messaging API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48709799",
+		"_collection_link": "https://azrstagiere2-2939982.postman.co/workspace/stage's-Workspace~2cdc03fa-67d8-4d81-87b5-46abb4b37a7e/collection/48709799-d106556b-ab36-466e-8de9-1cda9613fc5a?action=share&source=collection_link&creator=48709799"
+	},
+	"item": [
+		{
+			"name": "Login JWT",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"audia\",\r\n  \"password\": \"1234\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/token/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"token",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Conversation",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU4NjU2MTczLCJpYXQiOjE3NTg2NTU4NzMsImp0aSI6ImY5ZDlmNDQxNWE0NzQ2MWU5Mjc2NmJlOTg4ZDE2ZTRlIiwidXNlcl9pZCI6IjEifQ.rhi3Q8dbugAfUTJYSXQlqpC9Etdxu9JCk4PcuYz8jHw",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"participants\": [\r\n    \"56388401-46bc-4fe9-b40c-b4ac1e63a76a\"\r\n  ]\r\n}\r\n\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/conversations/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"conversations",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send Message",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Get Conversations",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
