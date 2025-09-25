@@ -71,6 +71,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'chats.middleware.RequestLoggingMiddleware',
+    # Custom middleware
+    'apps.core.middleware.request_logging.RequestLoggingMiddleware',
+    'apps.core.middleware.auth_restriction.AuthRestrictionMiddleware',
+    'apps.core.middleware.ip_blocker.IPBlockerMiddleware',
     
 ]
 
