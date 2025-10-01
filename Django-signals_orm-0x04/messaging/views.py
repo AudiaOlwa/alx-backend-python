@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from .models import Message
+from django.contrib.auth.decorators import login_required
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
@@ -19,14 +20,9 @@ def delete_user(request):
     return Response({"message": f"L'utilisateur {username} a été supprimé avec ses données associées."})
 
 
-def conversation_view(request, user_id):
-    other_user = User.objects.get(pk=user_id)
-    conversation = (
-        Message.objects.filter(
-            (Q(sender=request.user, receiver=other_user) | Q(sender=other_user, receiver=request.user)),
-            parent_message__isnull=True
-        )
-        .select_related("sender", "receiver")
-        .prefetch_related("replies__sender", "replies__receiver")
-    )
-    return render(request, "messaging/conversation.html", {"conversation": conversation})
+@login_required
+def inbox(request):
+    # Utilisation du manager custom pour récupérer seulement les non lus
+    unread_messages = Message.unread.for_user(request.user)
+    return render(request, "messaging/inbox.html", {"messages": unread_messages})
+
