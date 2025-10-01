@@ -60,3 +60,25 @@ class DeleteUserTest(TestCase):
         self.assertFalse(Message.objects.filter(sender=self.user1).exists())
         self.assertFalse(Notification.objects.filter(user=self.user1).exists())
         self.assertFalse(MessageHistory.objects.filter(edited_by=self.user1).exists())
+
+# On valide que les threads fonctionnent et qu’on n’a pas trop de requêtes SQL.
+class ThreadedConversationTest(TestCase):
+    def setUp(self):
+        self.alice = User.objects.create_user(username="alice", password="pass")
+        self.bob = User.objects.create_user(username="bob", password="pass")
+
+        # Message racine
+        self.msg1 = Message.objects.create(sender=self.alice, receiver=self.bob, content="Salut Bob!")
+
+        # Réponse directe
+        self.reply1 = Message.objects.create(sender=self.bob, receiver=self.alice, content="Salut Alice!", parent_message=self.msg1)
+
+        # Réponse à une réponse
+        self.reply2 = Message.objects.create(sender=self.alice, receiver=self.bob, content="Comment ça va?", parent_message=self.reply1)
+
+    def test_thread_replies(self):
+        thread = self.msg1.get_thread()
+        contents = [m.content for m in thread]
+
+        self.assertIn("Salut Alice!", contents)
+        self.assertIn("Comment ça va?", contents)

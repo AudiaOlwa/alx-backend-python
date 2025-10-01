@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 
 class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
@@ -15,10 +15,27 @@ class Message(models.Model):
         blank=True,
         related_name="edited_messages"
     )
-
+    # Ajout pour threads
+    parent_message = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="replies"
+    )
 
     def __str__(self):
-        return f"Message from {self.sender} to {self.receiver}"
+        return f"{self.sender} -> {self.receiver}: {self.content[:30]}"
+
+    def get_thread(self):
+        """
+        Récupère récursivement toutes les réponses à ce message
+        """
+        thread = []
+        for reply in self.replies.all().select_related("sender", "receiver").prefetch_related("replies"):
+            thread.append(reply)
+            thread.extend(reply.get_thread())
+        return thread
 
 
 class Notification(models.Model):
