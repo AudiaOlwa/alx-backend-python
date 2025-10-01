@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from .models import Message
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
@@ -41,3 +42,11 @@ def inbox(request):
 
     # On peut choisir lequel afficher ; ici on renvoie la requête optimisée
     return render(request, "messaging/inbox.html", {"messages": optimized_unread})
+
+    # On met la vue en cache pour 60 secondes
+@cache_page(60)
+def conversation_messages(request, user1_id, user2_id):
+    messages = Message.objects.filter(sender_id=user1_id, receiver_id=user2_id)\
+                              .select_related('sender', 'receiver')\
+                              .only('sender', 'receiver', 'content', 'timestamp')
+    return render(request, 'messaging/conversation.html', {'messages': messages})
