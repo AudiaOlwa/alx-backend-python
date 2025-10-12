@@ -1,21 +1,27 @@
-# Utiliser une image Python officielle comme base
-FROM python:3.10
+# Utiliser Python 3.10 (version légère)
+FROM python:3.10-slim
 
-# Définir le répertoire de travail dans le conteneur
+# Installer les dépendances système nécessaires à mysqlclient
+RUN apt-get update && apt-get install -y \
+    gcc \
+    default-libmysqlclient-dev \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Définir le dossier de travail
 WORKDIR /app
 
-# Copier les fichiers nécessaires
+# Copier le fichier des dépendances
 COPY requirements.txt .
 
-# Installer les dépendances
+# Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copier tout le code de l'application dans le conteneur
+# Copier le reste du projet
 COPY . .
 
-# Exposer le port utilisé par Django (par défaut 8000)
+# Exposer le port utilisé par Django
 EXPOSE 8000
 
-# Commande pour exécuter le serveur Django
+# Commande de démarrage du serveur Django
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-# Use: docker run -p 8000:8000 messaging_app_image
