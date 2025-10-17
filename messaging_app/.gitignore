@@ -3,7 +3,12 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
+*.zip
+*.tar.gz
+*.mp4
+*.iso
+*.db
+*.sqlite3
 # Virtual environments
 venv/
 env/
