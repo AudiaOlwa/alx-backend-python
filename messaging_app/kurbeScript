@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # kurbeScript - Start and verify a local Kubernetes cluster using Minikube
 
 echo "🚀 Starting Minikube cluster..."
