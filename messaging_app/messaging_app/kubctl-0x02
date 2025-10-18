@@ -1,0 +1,19 @@
+#!/bin/bash
+# Blue-Green Deployment Script
+# Author: ALX Exercise Solution
+
+echo "🔵 Deploying Blue version..."
+kubectl apply -f messaging_app/blue_deployment.yaml
+
+echo "🟢 Deploying Green version..."
+kubectl apply -f messaging_app/green_deployment.yaml
+
+echo "🔁 Applying Service configuration..."
+kubectl apply -f messaging_app/kubeservice.yaml
+
+echo "📦 Checking Pods..."
+kubectl get pods -l app=messaging-app
+
+echo "🧾 Checking logs for Green deployment..."
+GREEN_POD=$(kubectl get pods -l version=green -o jsonpath='{.items[0].metadata.name}')
+kubectl logs $GREEN_POD
