@@ -1,0 +1,29 @@
+#!/bin/bash
+# Rolling update script for messaging_app (ALX exercise)
+# Author: Your Name
+
+set -e
+
+echo "🚀 Starting rolling update for messaging-app-blue..."
+
+# Step 1: Apply the updated deployment file
+kubectl apply -f messaging_app/blue_deployment.yaml
+
+# Step 2: Monitor rollout status
+echo "📡 Monitoring rollout status..."
+kubectl rollout status deployment/messaging-app-blue
+
+# Step 3: Continuous availability test
+echo "🧪 Testing app availability during rollout..."
+SERVICE_IP=$(minikube service messaging-app-service --url | head -n1)
+echo "Service URL: $SERVICE_IP"
+
+for i in {1..20}
+do
+  curl -s -o /dev/null -w "Request #$i: %{http_code}\n" $SERVICE_IP || echo "⚠️ Request failed"
+  sleep 1
+done
+
+# Step 4: Verify pods
+echo "✅ Current pods after rollout:"
+kubectl get pods -l app=messaging-app
