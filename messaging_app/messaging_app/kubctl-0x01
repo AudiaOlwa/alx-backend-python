@@ -1,0 +1,37 @@
+#!/bin/bash
+# Script: kubctl-0x01
+# Objective: Scale Django app deployment to 3 replicas and monitor resource usage
+
+set -e
+
+echo "🔍 Checking Kubernetes cluster status..."
+kubectl cluster-info
+
+echo "📦 Getting current deployments..."
+kubectl get deployments
+
+# You can change 'messaging-deployment' to the name defined in your deployment.yaml
+DEPLOYMENT_NAME="messaging-deployment"
+
+echo "⚙️ Scaling the Django app to 3 replicas..."
+kubectl scale deployment $DEPLOYMENT_NAME --replicas=3
+
+echo "⏳ Waiting for pods to be ready..."
+sleep 10
+
+echo "✅ Verifying pods running..."
+kubectl get pods -o wide
+
+echo "📈 Checking resource usage..."
+kubectl top pods || echo "⚠️ Metrics Server may not be installed."
+
+echo "🚀 Performing load test using wrk (if available)..."
+if command -v wrk &> /dev/null
+then
+    echo "Running: wrk -t4 -c100 -d30s http://localhost:8000/"
+    wrk -t4 -c100 -d30s http://localhost:8000/
+else
+    echo "⚠️ wrk not installed. Install with: sudo apt install wrk -y"
+fi
+
+echo "🎉 Scaling test completed successfully!"
