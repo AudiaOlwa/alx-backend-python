@@ -1,0 +1,43 @@
+pipeline {
+    agent any
+
+    environment {
+        // Identifiants GitHub
+        GIT_CREDENTIALS = credentials('github-creds')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/AudiaOlwa/alx_travel_app_0x02.git',
+                    credentialsId: "${GIT_CREDENTIALS}"
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                source venv/bin/activate
+                pytest --maxfail=1 --disable-warnings --junitxml=test-results.xml
+                '''
+            }
+        }
+
+        stage('Test Report') {
+            steps {
+                junit 'test-results.xml'
+            }
+        }
+    }
+}
