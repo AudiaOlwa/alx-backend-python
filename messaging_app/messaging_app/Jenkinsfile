@@ -1,36 +1,44 @@
 pipeline {
     agent any
 
+    environment {
+        // Identifiants GitHub
+        GIT_CREDENTIALS = credentials('github-creds')
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/AudiaOlwa/alx_travel_app_0x02.git'
+                git branch: 'main',
+                    url: 'https://github.com/AudiaOlwa/alx-backend-python.git',
+                    credentialsId: "${GIT_CREDENTIALS}"
             }
         }
 
-        stage('Install dependencies') {
+        stage('Install Dependencies') {
             steps {
-                sh """
-                cd messaging_app
-                pip3 install --upgrade pip
-                pip3 install -r requirements.txt
-                """
+                sh '''
+                cd messaging_app/requirements.txt
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install -r requirements.txt
+                '''
             }
         }
 
-        stage('Run tests') {
+        stage('Run Tests') {
             steps {
-                sh """
-                cd messaging_app
-                pytest --junitxml=pytest-report.xml
-                """
+                sh '''
+                source venv/bin/activate
+                pytest --maxfail=1 --disable-warnings --junitxml=test-results.xml
+                '''
             }
         }
-    }
 
-    post {
-        always {
-            junit 'messaging_app/pytest-report.xml'
+        stage('Test Report') {
+            steps {
+                junit 'test-results.xml'
+            }
         }
     }
 }
